@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Http\Services\ProductService;
 use App\Models\Product;
-use App\Models\UserProduct;
-use Illuminate\Support\Facades\Auth;
 
 class ProductController
 {
@@ -18,20 +16,13 @@ class ProductController
     }
     public function catalog()
     {
-        if (Auth::check()) {
-            $products = Product::all();
-            return view('product.catalog', compact('products'));
-        } else {
-            return redirect()->route('catalog');
-        }
+        $products = Product::all();
+        return view('product.catalog', compact('products'));
     }
 
     public function addProduct(ProductRequest $request)
     {
-        if ($this->productService->addProduct($request) === true) {
-            return redirect()->route('catalog');
-        } else {
-            return redirect()->route('signIn');
-        }
+        $this->productService->addProduct($request);
+        return redirect()->route('catalog');
     }
 }

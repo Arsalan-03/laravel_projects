@@ -10,42 +10,35 @@ class ProductService
 {
     public function addProduct($request): bool
     {
-        if (Auth::check()) {
-            $validatedData = $request->validated();
-            $user = Auth::user();
+        $validatedData = $request->validated();
+        $user = Auth::user();
 
-            $cartItem = UserProduct::query()->where('product_id', $validatedData['product_id'])->first();
+        $cartItem = UserProduct::query()->where('product_id', $validatedData['product_id'])->first();
 
-            if ($cartItem) {
-                $cartItem->amount = $cartItem->amount + 1;
-                $cartItem->save();
-            } else {
-                UserProduct::query()->create([
-                    'user_id' => $user->getAuthIdentifier(),
-                    'product_id' => $validatedData['product_id'],
-                    'amount' => $validatedData['amount'],
-                ]);
-            }
+        if ($cartItem) {
+            $cartItem->amount = $cartItem->amount + 1;
+            $cartItem->save();
         } else {
-            return false;
+            UserProduct::query()->create([
+                'user_id' => $user->getAuthIdentifier(),
+                'product_id' => $validatedData['product_id'],
+                'amount' => $validatedData['amount'],
+            ]);
         }
         return true;
     }
 
     public function deleteToCart($request): bool
     {
-        if (Auth::check()) {
-            $validatedData = $request->validated();
+        $validatedData = $request->validated();
 
-            $cartItem = UserProduct::query()->where('product_id', $validatedData['product_id'])->first();
+        $cartItem = UserProduct::query()->where('product_id', $validatedData['product_id'])->first();
 
-            if ($cartItem) {
-                $cartItem->amount = $cartItem->amount - 1;
-                $cartItem->save();
-            }
-        } else {
-            return false;
+        if ($cartItem) {
+            $cartItem->amount = $cartItem->amount - 1;
+            $cartItem->save();
         }
+
         return true;
     }
 }

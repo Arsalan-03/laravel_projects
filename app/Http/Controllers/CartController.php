@@ -18,31 +18,21 @@ class CartController
 
     public function cart()
     {
-        if(Auth::check()) {
-            $userId = Auth::id();
-            $cartProducts = UserProduct::query()->where('user_id', $userId)->with('product')->get();
+        $userId = Auth::id();
+        $cartProducts = UserProduct::query()->where('user_id', $userId)->with('product')->get();
 
-            return view('product.cart', compact('cartProducts'));
-        } else {
-            return redirect()->route('signIn');
-        }
+        return view('product.cart', compact('cartProducts'));
     }
 
     public function addToCart(ProductRequest $request)
     {
-      if ($this->productService->addProduct($request) === true) {
-          return redirect()->route('cart');
-      } else {
-          return redirect()->route('signIn');
-      }
+      $this->productService->addProduct($request);
+      return redirect()->route('cart');
     }
 
     public function deleteToCart(ProductRequest $request)
     {
-        if ($this->productService->deleteToCart($request) === true) {
-            return redirect()->route('cart');
-        } else {
-            return redirect()->route('signIn');
-        }
+        $this->productService->deleteToCart($request);
+        return redirect()->route('cart');
     }
 }

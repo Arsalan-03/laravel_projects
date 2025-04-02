@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="login-box">
-    <form action="/postSignIn" method="POST">
+    <form action="/postLogin" method="POST">
         @csrf
         <h2>Login</h2>
 
