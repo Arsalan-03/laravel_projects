@@ -4,7 +4,8 @@
 
 <main>
     <section class="checkout-form">
-        <form action="/order" method="post">
+        <form action="/postOrder" method="post">
+            @csrf
             <h6>Contact information</h6>
             <div class="form-control">
                 @if($errors->has('eamil'))
@@ -102,23 +103,25 @@
             <div class="checkout-lists">
                 @foreach($orderProducts as $orderProduct)
                 <div class="card">
-                    <div class="card-image"><img src="<?php echo $newOrderProduct->getProduct()->getImage(); ?>" alt=""></div>
+                    <div class="card-image"><img src="<?php echo $orderProduct->Product->image; ?>" alt=""></div>
                     <div class="card-details">
-                        <div class="card-name"><?php echo $newOrderProduct->getProduct()->getName(); ?></div>
-                        <div class="card-price"><?php echo '$' . $newOrderProduct->getProduct()->getPrice() . '₽'; ?> <span>$94.99</span></div>
+                        <div class="card-name"><?php echo $orderProduct->Product->name; ?></div>
+                        <div class="card-price"><?php echo '$' . $orderProduct->Product->price . '₽'; ?> <span>$94.99</span></div>
                         <div class="card-wheel">
                             <div style="display: flex; align-items: center;">
 
-                                <form action="/deleteProduct" method="post" style="margin: 0;">
-                                    <input type="hidden" name="product_id" value="<?php echo $newOrderProduct->getProductId(); ?>">
+                                <form action="/deleteToOrder" method="post" style="margin: 0;">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="<?php echo $orderProduct->Product->id; ?>">
                                     <input type="hidden" name="quantity" value="1">
                                     <button type="submit">-</button>
                                 </form>
 
-                                <span style="margin: 0 10px;"><?php echo $newOrderProduct->getQuantity(); ?></span>
+                                <span style="margin: 0 10px;"><?php echo $orderProduct->amount?></span>
 
-                                <form action="/addProduct" method="post" style="margin: 0;">
-                                    <input type="hidden" name="product_id" value="<?php echo $newOrderProduct->getProductId(); ?>">
+                                <form action="/addToOrder" method="post" style="margin: 0;">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="<?php echo $orderProduct->Product->id; ?>">
                                     <input type="hidden" name="quantity" value="1">
                                     <button type="submit">+</button>
                                 </form>
@@ -129,16 +132,10 @@
                 @endforeach
 
             </div>
-{{--            <div class="checkout-total">--}}
-{{--                <h6>Total</h6>--}}
-{{--                <p><?php--}}
-{{--                   $totalPrice = 0;--}}
-{{--                   foreach ($newOrderProducts as $newOrderProduct) {--}}
-{{--                       $totalPrice += $newOrderProduct->getProduct()->getPrice() * $newOrderProduct->getQuantity();--}}
-{{--                   }--}}
-{{--                   echo "$" . $totalPrice;--}}
-{{--                   ?></p>--}}
-{{--            </div>--}}
+            <div class="checkout-total">
+                <h6>Total</h6>
+                <p>{{ '$' . $orderProduct->amount *= $orderProduct->Product->price }}</p>
+            </div>
         </div>
     </section>
 

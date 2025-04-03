@@ -42,7 +42,7 @@
     <div class="cart-summary">
         <h3>Итого:</h3>
         <p class="total-price">{{ '$' . $cartProduct->amount *= $cartProduct->Product->price }}</p>
-        <button class="checkout-button">Оформить заказ</button>
+        <a class="checkout-button" href="{{ route('order') }}">Оформить заказ</a>
     </div>
 
 </div>

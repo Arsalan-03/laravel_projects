@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Http\Services\CartService;
 use App\Http\Services\ProductService;
 use App\Models\UserProduct;
 use Illuminate\Support\Facades\Auth;
@@ -10,17 +11,21 @@ use Illuminate\Support\Facades\Auth;
 class CartController
 {
     private ProductService  $productService;
+    private CartService $cartService;
 
     public function __construct()
     {
         $this->productService = new ProductService();
+        $this->cartService = new CartService();
     }
 
     public function cart()
     {
-        $userId = Auth::id();
-        $cartProducts = UserProduct::query()->where('user_id', $userId)->with('product')->get();
+        $cartProducts = $this->cartService->getCart();
 
+        if (empty($cartProducts)) {
+            return redirect()->route('catalog');
+        }
         return view('product.cart', compact('cartProducts'));
     }
 

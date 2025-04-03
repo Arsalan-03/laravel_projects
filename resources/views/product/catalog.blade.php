@@ -12,7 +12,6 @@
             <li><a href="/myOrders">Purchase</a></li>
             <li><a href="/profile">Profile</a></li>
             <li><a href="/cart">Cart</a></li>
-            <li><a href="/order">Order</a></li>
             <li><a href="#">Design &bigtriangledown;</a>
                 <ul>
                     <li><a href="#">UI Design</a></li>
@@ -38,7 +37,8 @@
             <div class="card__top">
 
                 <!-- Изображение-ссылка товара -->
-                <form action="/open-product" method="post">
+                <form action="/openProduct" method="get">
+                    @csrf
                     <a class="card__image"> <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <button class="product-button">
                             <img
@@ -93,8 +93,8 @@
 {{--                    // Обновляем количество товаров в бейдже корзины--}}
 {{--                    $('.card__bottom').text(response.count);--}}
 {{--                },--}}
-{{--                error: function(xhr, status, error) {--}}
-{{--                    console.error('Ошибка при добавлении товара:', error);--}}
+{{--                errors: function(xhr, status, errors) {--}}
+{{--                    console.errors('Ошибка при добавлении товара:', errors);--}}
 {{--                }--}}
 {{--            });--}}
 {{--        });--}}
