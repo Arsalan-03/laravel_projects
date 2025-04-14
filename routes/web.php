@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MailTestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,3 +34,9 @@ Route::middleware('auth')->post('/postOrder', [\App\Http\Controllers\OrderContro
 Route::middleware('auth')->post('/deleteToOrder', [\App\Http\Controllers\OrderController::class, 'deleteToOrder'])->name('deleteToOrder');
 Route::middleware('auth')->post('/addToOrder', [\App\Http\Controllers\OrderController::class, 'addToOrder'])->name('addToOrder');
 Route::middleware('auth')->get('/myOrders', [\App\Http\Controllers\OrderController::class, 'myOrders'])->name('myOrders');
+Route::middleware('auth')->get('/myOrders', [\App\Http\Controllers\OrderController::class, 'myOrders'])->name('myOrders');
+Route::middleware('auth')->get('userOrders/{id}', [\App\Http\Controllers\OrderController::class, 'userOrders'])->name('userOrders');
+
+Route::get('/email/send', [\App\Http\Controllers\TestMailController::class, 'send'])->name('send');
+Route::get('/email/receive', [\App\Http\Controllers\TestMailController::class, 'receive'])->name('receive');
+Route::get('/send-test-email', [MailTestController::class, 'send']);

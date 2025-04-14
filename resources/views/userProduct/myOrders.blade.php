@@ -13,17 +13,18 @@
     <section class="order-list">
         <h2>Список заказов</h2>
         <ul>
-            @if($userOrders)
-           @foreach($userOrders as $userOrder)
-                    <li>
-                        <form action="/myOrders" method="post">
-                            <div class="order-item">
-                                <input type="hidden" name="id" value="{{ $userOrder->id }}">
-                                <button>Заказ {{ $userOrder->id }}</button>
-                                <span class="status">Выполнен</span>
-                            </div>
-                        </form>
-                    </li>
+            @if(isset($orders))
+            @foreach($orders as $order)
+            <li>
+                <form action="/userOrders/{id}" method="get">
+                    @csrf
+                    <div class="order-item">
+                        <input type="hidden" name="id" value="{{ $order->id }}">
+                        <button>Заказ {{ '#' . $order->id }}</button>
+                        <span class="status">Выполнен</span>
+                    </div>
+                </form>
+            </li>
             @endforeach
             @endif
         </ul>

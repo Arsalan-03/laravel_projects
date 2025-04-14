@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\UserProduct;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
@@ -19,6 +20,7 @@ class OrderService
     }
     public function createOrder($validatedData)
     {
+        DB::beginTransaction();
         $userId = Auth::id();
         try {
             Order::query()->create([
@@ -44,7 +46,9 @@ class OrderService
             }
 
             UserProduct::query()->delete();
+            DB::commit();
         } catch (\Exception $exception) {
+            DB::rollBack();
             $this->loggerService->errors($exception);
             return response()->view('errors.505', [], 500);
         }

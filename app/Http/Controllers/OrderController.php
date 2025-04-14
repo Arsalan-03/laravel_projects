@@ -8,6 +8,7 @@ use App\Http\Services\CartService;
 use App\Http\Services\OrderService;
 use App\Http\Services\ProductService;
 use App\Models\Order;
+use App\Models\OrderProduct;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController
@@ -49,11 +50,20 @@ class OrderController
         return redirect()->route('order');
     }
 
-    public function myOrders(OrderRequest $request)
+    public function myOrders()
     {
-        $orderId = $request->input('id');
-        $userOrders = Order::query()->where('order_id', $orderId)->get();
+        $userId = Auth::id();
+        $orders = Order::query()->where('user_id', $userId)->get();
+        return view('userProduct.myOrders', compact('orders'));
+    }
 
-        return view('userProduct.myOrders', compact('userOrders'));
+    public function userOrders()
+    {
+        $userId = Auth::id();
+        $orderId = $_GET['id'];
+        $user = Order::query()->where('user_id', $userId)->get();
+        $userOrders = OrderProduct::query()->where('order_id', $orderId)->with('product')->get();
+
+        return view('userProduct.userOrders', compact( 'user', 'userOrders'));
     }
 }

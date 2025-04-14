@@ -72,18 +72,47 @@ return [
             'after_commit' => false,
         ],
 
-    ],
+        'rabbitmq' => [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Job Batching
-    |--------------------------------------------------------------------------
-    |
-    | The following options configure the database and table that store job
-    | batching information. These options can be updated to any database
-    | connection and table which has been defined by your application.
-    |
-    */
+            'driver' => 'rabbitmq',
+
+            'queue' => env('RABBITMQ_QUEUE', 'default'),
+
+            'connection' => PhpAmqpLib\Connection\AMQPStreamConnection::class,
+
+            'hosts' => [
+                [
+                    'host' => env('RABBITMQ_HOST', 'rabbitmq'),
+                    'port' => env('RABBITMQ_PORT', 5672),
+                    'user' => env('RABBITMQ_USER', 'admin'),
+                    'password' => env('RABBITMQ_PASSWORD', 'admin'),
+                    'vhost' => env('RABBITMQ_VHOST', '/'),
+                ],
+            ],
+
+            'options' => [
+                'ssl_options' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                ],
+                'queue' => [
+                    'job' => \VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob::class,
+                ],
+            ],
+
+            'worker' => env('RABBITMQ_WORKER', 'default'),
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Job Batching
+        |--------------------------------------------------------------------------
+        |
+        | The following options configure the database and table that store job
+        | batching information. These options can be updated to any database
+        | connection and table which has been defined by your application.
+        |
+        */
 
     'batching' => [
         'database' => env('DB_CONNECTION', 'sqlite'),
@@ -108,5 +137,5 @@ return [
         'database' => env('DB_CONNECTION', 'sqlite'),
         'table' => 'failed_jobs',
     ],
-
+        ],
 ];

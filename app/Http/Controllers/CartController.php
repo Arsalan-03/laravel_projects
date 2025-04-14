@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Http\Services\CartService;
 use App\Http\Services\ProductService;
-use App\Models\UserProduct;
-use Illuminate\Support\Facades\Auth;
 
 class CartController
 {
