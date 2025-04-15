@@ -8,6 +8,8 @@ use App\Http\Services\ProductService;
 use App\Http\Services\ReviewService;
 use App\Models\Product;
 use App\Models\Review;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Request;
 
 class ProductController
 {
@@ -51,4 +53,39 @@ class ProductController
         return view('product.open', compact('product', 'reviews'));
     }
 
+    public function index()
+    {
+        $products = Cache::remember('products_all', 3600, function () {
+            return Product::all();
+        });
+
+        return view('products.index', compact('products'));
+    }
+
+    public function store(Request $request)
+    {
+        Product::create($request->all());
+        Cache::forget('products_all');
+
+        return redirect()->route('products.index')
+            ->with('success', 'Продукт создан и кэш сброшен');
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        $product->update($request->all());
+        Cache::forget('products_all');
+
+        return redirect()->route('products.index')
+            ->with('success', 'Продукт обновлён и кэш сброшен');
+    }
+
+    public function destroy(Product $product)
+    {
+        $product->delete();
+        Cache::forget('products_all');
+
+        return redirect()->route('products.index')
+            ->with('success', 'Продукт удалён и кэш сброшен');
+    }
 }

@@ -13,7 +13,6 @@
     <div class="text">Sign Up</div>
     <form action="/postSignUp" method="post">
         @csrf
-
         <div class="field">
             <span class="bx bxs-user"></span>
             <input type="text" name="name" placeholder="Username" required value="{{ old('name') }}">

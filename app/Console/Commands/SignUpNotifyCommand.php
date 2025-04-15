@@ -34,18 +34,18 @@ class SignUpNotifyCommand extends Command
 
     /**
      * Execute the console command.
-     */
-    public function handle()
-    {
-        $callback = function ($msg) {
-            $data = $msg->body;
-            $data = json_decode($data, true);
-            $user = User::query()->find($data['user_id']);
-            Mail::to($user->email)->send(new TestMail());
-        };
-
-        echo 'wait..';
-
-        $this->rabbitmqService->consume('sign-up_email', $callback);
-    }
+//     */
+//    public function handle()
+//    {
+//        $callback = function ($msg) {
+//            $data = $msg->body;
+//            $data = json_decode($data, true);
+//            $user = User::query()->find($data['user_id']);
+//            Mail::to($user->email)->send(new TestMail());
+//        };
+//
+//        echo 'wait..';
+//
+//        $this->rabbitmqService->consume('sign-up_email', $callback);
+//    }
 }

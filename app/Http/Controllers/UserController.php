@@ -4,21 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SignInRequest;
 use App\Http\Requests\SignUpRequest;
-use App\Http\Services\RabbitmqService;
+//use App\Http\Services\RabbitmqService;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Jobs\SendUserNotification;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class UserController
 {
-    private RabbitmqService $rabbitmqService;
-
-    public function __construct(RabbitmqService $rabbitmqService)
-    {
-        $this->rabbitmqService = $rabbitmqService;
-    }
+//    private RabbitmqService $rabbitmqService;
+//
+//    public function __construct(RabbitmqService $rabbitmqService)
+//    {
+//        $this->rabbitmqService = $rabbitmqService;
+//    }
     public function signUp()
     {
         return view('user.signUp');
@@ -39,7 +40,12 @@ class UserController
             'password' => Hash::make($validatedData['password']),
         ]);
 
-        $this->rabbitmqService->produce(['user_id' => $user->id], 'sign-up_email');
+//        $details = [
+//            'title' => 'Привет!',
+//            'body' => 'Спасибо за регистрацию!'
+//        ];
+
+        SendUserNotification::dispatch($user);
         return redirect()->route('login');
     }
 

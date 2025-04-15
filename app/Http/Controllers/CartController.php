@@ -20,7 +20,6 @@ class CartController
     public function cart()
     {
         $cartProducts = $this->cartService->getCart();
-
         if (empty($cartProducts)) {
             return redirect()->route('catalog');
         }

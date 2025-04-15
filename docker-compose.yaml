@@ -19,6 +19,8 @@ services:
     volumes:
       - .:/var/www/html
       - ./docker/Php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    depends_on:
+      - redis
     env_file:
       - .env
 
@@ -35,13 +37,19 @@ services:
     volumes:
       - ./sourcefiles/postgres:/var/lib/postgresql/data
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    restart: always
-    environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin
+#  rabbitmq:
+#    image: rabbitmq:3-management
+#    restart: always
+#    environment:
+#      RABBITMQ_DEFAULT_USER: admin
+#      RABBITMQ_DEFAULT_PASS: admin
+#    ports:
+#      - "5672:5672"     # AMQP порт
+#      - "15672:15672"   # Web UI порт
+  redis:
+    image: redis:alpine
+    container_name: redis
     ports:
-      - "5672:5672"     # AMQP порт
-      - "15672:15672"   # Web UI порт
+      - "6379:6379"
+    restart: unless-stopped
 
