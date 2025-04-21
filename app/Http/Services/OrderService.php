@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Jobs\SendHttpRequest;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\UserProduct;
@@ -18,12 +19,14 @@ class OrderService
         $this->cartService = new CartService();
         $this->loggerService = new LoggerService();
     }
+
     public function createOrder($validatedData)
     {
         DB::beginTransaction();
         $userId = Auth::id();
+
         try {
-            Order::query()->create([
+            $order = Order::create([
                 'user_id' => $userId,
                 'email' => $validatedData['email'],
                 'phone' => $validatedData['phone'],
@@ -35,23 +38,36 @@ class OrderService
             ]);
 
             $userProducts = $this->cartService->getCart();
-            $orderId = Order::query()->latest()->first()->id;
 
-            foreach ($userProducts as $userProduct) {
-                OrderProduct::query()->create([
-                    'order_id' => $orderId,
-                    'product_id' => $userProduct::query()->where('product_id', $userProduct->product_id)->first()->id,
-                    'amount' => $userProduct::query()->where('product_id', $userProduct->product_id)->first()->amount,
-                ]);
-            }
+            $description = $this->generateDescription($order, $userProducts);
 
-            UserProduct::query()->delete();
+            UserProduct::where('user_id', $userId)->delete();
+
+            $dto = new \App\DTO\YougileTaskDto($order->id, $description);
+            SendHttpRequest::dispatch($dto);
+
             DB::commit();
         } catch (\Exception $exception) {
             DB::rollBack();
             $this->loggerService->errors($exception);
             return response()->view('errors.505', [], 500);
         }
+
         return true;
     }
+
+    private function generateDescription($order, $userProducts): string
+    {
+        $description = "Имя: {$order->name} <br>"
+            . "Адрес: {$order->address} <br>"
+            . "Телефон: {$order->phone} <br>"
+            . "Список товаров: <br>";
+
+        foreach ($userProducts as $userProduct) {
+            $description .= "- Товар #{$userProduct->product_id}, количество: {$userProduct->amount} <br>";
+        }
+
+        return $description;
+    }
 }
+

@@ -24,6 +24,6 @@ class SendUserNotification implements ShouldQueue
 
     public function handle()
     {
-        Mail::to($this->user->email)->send(new UserNotificationMail());
+        Mail::to($this->user->email)->send(new UserNotificationMail($this->user->name));
     }
 }

@@ -40,11 +40,6 @@ class UserController
             'password' => Hash::make($validatedData['password']),
         ]);
 
-//        $details = [
-//            'title' => 'Привет!',
-//            'body' => 'Спасибо за регистрацию!'
-//        ];
-
         SendUserNotification::dispatch($user);
         return redirect()->route('login');
     }
