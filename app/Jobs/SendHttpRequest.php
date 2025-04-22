@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\DTO\YougileTaskDto;
 use App\Http\Services\Clients\YougileClient;
+use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -14,24 +15,24 @@ class SendHttpRequest implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public YougileTaskDto $dto;
+    private YougileTaskDto $dto;
+    private int $orderId;
 
-    /**
-     * Create a new job instance.
-     */
-    public function __construct(YougileTaskDto $dto)
+    public function __construct(YougileTaskDto $dto, int $orderId)
     {
         $this->dto = $dto;
+        $this->orderId = $orderId;
     }
 
-    /**
-     * Execute the job.
-     */
-    public function handle(YougileClient $client): void
+    public function handle(): void
     {
-        // Пробуем отправить 3 раза с интервалом
-        retry(3, function () use ($client) {
-            $client->createTask($this->dto);
-        }, 100); // 100 мс между попытками
+        $client = new YougileClient();
+        $response = $client->createTask($this->dto);
+
+        if (!empty($response['id'])) {
+            Order::where('id', $this->orderId)
+                ->update(['yougile_task_id' => $response['id']]);
+        }
     }
 }
+

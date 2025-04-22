@@ -44,7 +44,7 @@ class OrderService
             UserProduct::where('user_id', $userId)->delete();
 
             $dto = new \App\DTO\YougileTaskDto($order->id, $description);
-            SendHttpRequest::dispatch($dto);
+            SendHttpRequest::dispatch($dto, $order->id);
 
             DB::commit();
         } catch (\Exception $exception) {

@@ -17,18 +17,18 @@ class YougileClient
      $this->apiKey = "REhsjeVSJIswZ+SNcMNY4OFIzwlA3wvIXvrVkuIlX4YmtERJG25Wjrp6Qg6AkwLC";
     }
 
-    public function createTask(YougileTaskDto $dto)
+    public function createTask(YougileTaskDto $dto): array
     {
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
                 'Content-Type' => 'application/json'
-            ])->post( $this->baseUrl.'tasks', $dto->toArray())
+            ])->post($this->baseUrl . 'tasks', $dto->toArray())
                 ->throw()
                 ->json();
 
-            if (!$response || !isset($response['id'])) {
-                throw new \RuntimeException('Ошибка при создании задачи в YouGile: пустой или некорректный ответ');
+            if (!isset($response['id'])) {
+                throw new \RuntimeException('YouGile: Некорректный ответ (нет ID задачи)');
             }
 
             return $response;
@@ -36,4 +36,5 @@ class YougileClient
             throw new \RuntimeException("Ошибка HTTP-запроса в YouGile: {$e->getMessage()}", 500);
         }
     }
+
 }
